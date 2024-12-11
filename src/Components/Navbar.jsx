@@ -18,7 +18,7 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import HelpIcon from '@mui/icons-material/Help';
 import './Navbar.css';
-import Gmaxlogo from '../Images/GmaxLogo.png'
+import Gmaxlogo from '../Images/NewGmaxlogo.jpeg'
 import dayjs from 'dayjs';
 import { useState } from 'react';
 
@@ -27,6 +27,7 @@ const Navbar = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const [opened, { open, close }] = useDisclosure(false);
+    const[Loading, Setloading]= useState(false);
     const [Inputs, SetInputs] = useState({
         VisitDate: '',
         VisitTime: '',
@@ -60,12 +61,49 @@ const Navbar = () => {
             messageApi.error("Please enter all detail's");
             return;
         }
-        if (MobileNumber < 10 || MobileNumber > 10) {
+        if (MobileNumber.length < 10 || MobileNumber.length > 10) {
             messageApi.error("Please enter 10 digit valid mobile number");
             return;
         }
-        const VisiterDate = dayjs(Inputs.VisitDate).format('DD-MM-YYYY'); // for input.
-        const VisiterTime = dayjs(Inputs.VisitTime).format('hh:mm:ss:A'); // for input.
+        const VisiterDate = dayjs(VisitDate).format('DD-MM-YYYY'); // for input.
+        const VisiterTime = dayjs(VisitTime).format('hh:mm:ss:A'); // for input.
+        Setloading(true);
+
+        const res = await fetch('/add/booking-site-details', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                VisiterDate, VisiterTime, VisitType, TotalNumberOfPersons, LeaderName, AssociateName, MobileNumber, PickUpLocation, ClientDetails, TotalNumberOfMales, TotalNumberOfFemales, VehicalDetails, TravellerDetails
+            })
+        });
+
+        if (res.status === 201) {
+            messageApi.success("Details saved into your database");
+            Setloading(false)
+            SetInputs({
+                VisitDate: '',
+                VisitTime: '',
+                VisitType: '',
+                TotalNumberOfPersons: '',
+                LeaderName: '',
+                AssociateName: '',
+                MobileNumber: '',
+                PickUpLocation: '',
+                ClientDetails: '',
+                TotalNumberOfMales: '',
+                TotalNumberOfFemales: '',
+                VehicalDetails: '',
+                TravellerDetails: '',
+            })
+            close();
+            return;
+        } else {
+            messageApi.error("oops! Something went wrong");
+            Setloading(false);
+            return
+        }
     }
 
     return (
@@ -102,14 +140,14 @@ const Navbar = () => {
 
                     <NativeSelect label="Traveller detail" data={['-- select --', 'Traveller', 'Personal', 'Personal piad']} mt={'sm'} withAsterisk name='TravellerDetails' value={Inputs.TravellerDetails} onChange={InputOnchange} required />
                 </Fieldset>
-                <Button mt={'md'} variant='filled' color='teal' fullWidth onClick={SubmitDetails}>Submit Detail's</Button>
+                <Button mt={'md'} variant='filled' color='teal' fullWidth onClick={SubmitDetails} disabled={Loading} loading={Loading}>Submit Detail's</Button>
             </Modal>
             <Box pb={120}>
                 <header className="header">
                     <Group justify="space-between" h="100%">
                         <Image
                             style={{ borderRadius: '20px', margin: '2px' }}
-                            width={70}
+                            width={60}
                             src={Gmaxlogo}
                             alt='GMAX LOGO'
 
@@ -167,7 +205,7 @@ const Navbar = () => {
 
                         <Group justify="center" grow pb="xl" px="md">
                             <Button variant="default">Log in</Button>
-                            <Button>Sign up</Button>
+                            <Button color='rgba(114, 30, 250, 1)' rightSection={<TourTwoToneIcon style={{ width: rem(14), height: rem(14) }} />} onClick={open}>Book Site Visit</Button>
                         </Group>
                     </ScrollArea>
                 </Drawer>
