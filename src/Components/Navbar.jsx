@@ -8,7 +8,7 @@ import {
     ScrollArea,
     rem,
     Modal,
-    Fieldset, TextInput, NativeSelect
+    Fieldset, TextInput, NativeSelect, Dialog, Text
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Image, DatePicker, TimePicker, message } from 'antd';
@@ -19,7 +19,9 @@ import HandshakeIcon from '@mui/icons-material/Handshake';
 import HelpIcon from '@mui/icons-material/Help';
 import './Navbar.css';
 import Gmaxlogo from '../Images/NewGmaxlogo.jpeg'
+import ShareIcon from '@mui/icons-material/Share';
 import dayjs from 'dayjs';
+
 import { useState } from 'react';
 
 
@@ -27,7 +29,8 @@ const Navbar = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const [opened, { open, close }] = useDisclosure(false);
-    const[Loading, Setloading]= useState(false);
+    const [openeddialog, { toggle: toggleDialog, close: closeDiaglog }] = useDisclosure(false);
+    const [Loading, Setloading] = useState(false);
     const [Inputs, SetInputs] = useState({
         VisitDate: '',
         VisitTime: '',
@@ -43,6 +46,7 @@ const Navbar = () => {
         VehicalDetails: '',
         TravellerDetails: '',
     })
+    const [Recemail, Setrecemail] = useState('');
     const InputOnchange = (e) => {
         const { name, value } = e.target;
         SetInputs({ ...Inputs, [name]: value })
@@ -106,6 +110,30 @@ const Navbar = () => {
         }
     }
 
+    const Share_Visiter_Form_Via_Link = async () => {
+        if (Recemail === "") {
+            message.error("Please enter Email-ID");
+            return;
+        }
+        const res = await fetch("/share-site-visit-link", {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({ Recemail })
+        });
+        if (res.status === 201) {
+            message.success("Link sent successfully to given email id");
+            Setrecemail('');
+            closeDiaglog();
+            return
+        } else {
+            message.error("oops! something went wrong");
+            return;
+        }
+
+    }
+
     return (
         <>
             {contextHolder}
@@ -140,8 +168,18 @@ const Navbar = () => {
 
                     <NativeSelect label="Traveller detail" data={['-- select --', 'Traveller', 'Personal', 'Personal piad']} mt={'sm'} withAsterisk name='TravellerDetails' value={Inputs.TravellerDetails} onChange={InputOnchange} required />
                 </Fieldset>
-                <Button mt={'md'} variant='filled' color='teal' fullWidth onClick={SubmitDetails} disabled={Loading} loading={Loading}>Submit Detail's</Button>
+                <Button mt={'md'} variant='light' color='teal' fullWidth onClick={SubmitDetails} disabled={Loading} loading={Loading}>Submit Detail's</Button>
             </Modal>
+            <Dialog opened={openeddialog} withCloseButton onClose={closeDiaglog} size="lg" radius="md">
+                <Text size="sm" mb="xs" fw={500} >
+                    Please enter the receiver email id.
+                </Text>
+
+                <Group align="flex-end">
+                    <TextInput placeholder="e.g. ramkumar@gmail.com" style={{ flex: 1 }} variant='filled' radius={'md'} name='RecEmailID' value={Recemail} onChange={(e) => Setrecemail(e.target.value)} required />
+                    <Button onClick={Share_Visiter_Form_Via_Link} color='teal' variant='light'>Send</Button>
+                </Group>
+            </Dialog>
             <Box pb={120}>
                 <header className="header">
                     <Group justify="space-between" h="100%">
@@ -170,6 +208,7 @@ const Navbar = () => {
                         <Group visibleFrom="sm">
                             <Button variant="default">Log in</Button>
                             <Button color='rgba(114, 30, 250, 1)' rightSection={<TourTwoToneIcon style={{ width: rem(14), height: rem(14) }} />} onClick={open}>Book Site Visit</Button>
+                            <Button color='rgba(114, 30, 250, 1)' rightSection={<ShareIcon style={{ width: rem(14), height: rem(14) }} />} onClick={toggleDialog} variant='outline'>Share Site Visit Link</Button>
                         </Group>
 
                         <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />

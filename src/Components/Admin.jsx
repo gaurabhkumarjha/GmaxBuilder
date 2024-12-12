@@ -111,7 +111,7 @@ const Admin = () => {
                                             <Text size="md" mt={'xs'}>Associate name.: {ele.Associate}</Text>
                                             <Text size="md" mt={'xs'}>Mobile number.: {ele.MobileNumber}</Text>
                                             <Text size="md" mt={'xs'}>Pick-up location.: {ele.PickUp_Location}</Text>
-                                            <Text size="md" mt={'xs'}>Client details.:{ele.Client_Details} </Text>
+                                            <Text size="md" mt={'xs'}>Client details.: {ele.Client_Details} </Text>
                                             <Text size="md" mt={'xs'}>Total numbers of male.: {ele.Total_number_Of_Male}</Text>
                                             <Text size="md" mt={'xs'}>Total numbers of female.: {ele.Total_number_Of_Female}</Text>
                                             <Text size="md" mt={'xs'}>Vehical detail.: {ele.Vehical_Details}</Text>

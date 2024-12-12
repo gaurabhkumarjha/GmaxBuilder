@@ -1,5 +1,6 @@
 const express = require("express");
 const cluster = require("cluster");
+const path = require("path");
 const os = require("os");
 const app = express();
 require('./DB/db');
@@ -12,7 +13,11 @@ const OS_Length = os.cpus().length
 
 app.use(cors());
 app.use(express.json());
+app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false }));
+
+// Serve static files from the "views" directory
+app.use(express.static(path.join(__dirname, "Image")));
 
 app.use(router);
 //app.use("/uploads", express.static("./Upload"));
@@ -32,5 +37,3 @@ if (cluster.isPrimary) {
         console.log("server is running...");
     });
 }
-
-
