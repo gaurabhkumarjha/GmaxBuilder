@@ -11,12 +11,18 @@
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous">
         </script>
     <style>
+        body{
+            background-image: url("http://localhost:8000/Logogmax.jpeg");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
         .card {
             display: flex;
             flex-direction: column;
             justify-content: center;
             margin: auto;
-            width: 20rem;
+            width: 30rem;
             box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         }
 
@@ -49,6 +55,7 @@
         <h5 class="card-title">
             -- Site Visit Form --
         </h5>
+        <div class="alert alert-info">All fields are mandatory, otherwise your booking form not be submitted.</div>
         <div class="card-body">
             <form action="" method="POST">
                 <label for="exampleFormControlInput1" class="form-label">Select Date</label>
