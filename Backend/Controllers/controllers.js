@@ -202,7 +202,7 @@ exports.Save_Opened_Site_Visit_Form = async (req, res) => {
             Traveller_Details: TravellerDetails
         });
         await NewBookingObj.save();
-        return res.status(201).json({ message: "Booking saved", NewBookingObj });
+        return res.status(201).json({ message: "Booking successfully saved in our database. Thank you!", NewBookingObj });
     } catch (error) {
         console.log("Error", error);
         return res.status(500).json({ message: "Error occured:- Code 500" });
